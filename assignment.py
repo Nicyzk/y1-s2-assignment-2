@@ -150,6 +150,7 @@ def find_and_group_matches(keywords):
     # Note: AND has precedence over OR. Refer to README.md, for explanation on concept of and_groups.
     or_groups = keywords.strip().lower().split(' or ')  # ['...', '...']
     and_groups = [re.split(' and | ', g) for g in or_groups]  # [[...], [...]]
+    and_groups = checks.check_mixed_rice_2d(and_groups)
     and_group_match_count = {}
     for i in range(1, len(or_groups) + 1):
         and_group_match_count[i] = []
@@ -162,7 +163,8 @@ def find_and_group_matches(keywords):
             for and_group in and_groups:
                 match_all_and_keywords = True
                 for keyword in and_group:
-                    if keyword not in canteen_stall_keywords[canteen][stall].lower().split(', '):
+                    stall_keywords = canteen_stall_keywords[canteen][stall].lower().split(', ')
+                    if keyword not in checks.check_mixed_rice_1d(stall_keywords):
                         match_all_and_keywords = False
                 if match_all_and_keywords:
                     no_of_and_group_matches += 1
@@ -261,8 +263,8 @@ def main():
         print("4 -- Location-based Search")
         print("5 -- Exit Program")
         print("=======================")
-        option = int(input("Enter option [1-5]: "))
-
+        # option = int(input("Enter option [1-5]: "))
+        option = checks.check_option("Enter option [1-5]: ")
         if option == 1:
             # print provided dictionary data structures
             print("1 -- Display Data")
