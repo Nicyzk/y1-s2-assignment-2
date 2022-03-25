@@ -209,29 +209,30 @@ def search_by_price(keywords, max_price):
             canteen, stall = canteen_stall.split(' - ')
             price = canteen_stall_prices[canteen][stall]
             if price <= max_price:
-                stalls_within_range.append(canteen_stall + ' - S$' + str(price))
+                stalls_within_range.append([canteen_stall, price])
             if stall_min_price == '' or price < float(stall_min_price.split('S$')[1]):
-                stall_min_price = canteen_stall + ' - S$' + str(price)
+                stall_min_price = canteen_stall + ' - S$' + "{:.2f}".format(price)
 
     if len(stalls_within_range) == 0:
         print('Food Stalls found: No food stall found with specified price range.')
         print('Recommended Food Stall with the closest price range.')
         print(stall_min_price)
     else:
+        stalls_within_range.sort(key=lambda x: x[1])
         print(f'Food Stalls found: {len(stalls_within_range)}')
         for stall in stalls_within_range:
-            print(stall)
+            print(stall[0] + ' - S$' + "{:.2f}".format(stall[1]))
 
 
 # Location-based Search Function - to be implemented
 def search_nearest_canteens(user_locations, k):
     canteen_dist = []
     for canteen in canteen_locations:
-        distA = math.sqrt((canteen_locations[canteen][0] - user_locations[0][0])**2
-                          + (canteen_locations[canteen][1] - user_locations[0][1])**2)
-        distB = math.sqrt((canteen_locations[canteen][0] - user_locations[1][0])**2
-                          + (canteen_locations[canteen][1] - user_locations[1][1])**2)
-        ave_dist = int((distA + distB)/2)
+        distA = math.sqrt((canteen_locations[canteen][0] - user_locations[0][0]) ** 2
+                          + (canteen_locations[canteen][1] - user_locations[0][1]) ** 2)
+        distB = math.sqrt((canteen_locations[canteen][0] - user_locations[1][0]) ** 2
+                          + (canteen_locations[canteen][1] - user_locations[1][1]) ** 2)
+        ave_dist = int((distA + distB) / 2)
         canteen_dist.append([canteen, ave_dist])
 
     # sort by distance of each canteen (2nd item of inner list)
@@ -263,7 +264,7 @@ def main():
         print("4 -- Location-based Search")
         print("5 -- Exit Program")
         print("=======================")
-        # option = int(input("Enter option [1-5]: "))
+
         option = checks.check_option("Enter option [1-5]: ")
         if option == 1:
             # print provided dictionary data structures
@@ -273,12 +274,12 @@ def main():
             print("Location Dictionary: ", canteen_locations)
         elif option == 2:
             # keyword-based search
-            keywords = input("Enter type of food: ")
+            keywords = checks.get_keywords("Enter type of food: ")
             search_by_keyword(keywords)
 
         elif option == 3:
             # price-based search
-            keywords = input("Enter type of food: ")
+            keywords = checks.get_keywords("Enter type of food: ")
             max_price = checks.get_max_price("Enter maximum meal price (S$): ")
             search_by_price(keywords, max_price)
 
